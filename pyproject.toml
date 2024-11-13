@@ -9,14 +9,11 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 rdflib = "^7.0.0"
-simpsons = {path = "../simpsons", develop = true}
 jinja2 = "^3.1.4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.3"
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.3"
+simpsons-rdf = "^0.1.2"
 
 [build-system]
 requires = ["poetry-core"]
