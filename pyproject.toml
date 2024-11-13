@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "rdflib-jinja"
+name = "jinja-rdf"
 version = "0.1.0"
 description = ""
 authors = ["Natanael Arndt <arndtn@gmail.com>"]
@@ -13,6 +13,9 @@ simpsons = {path = "../simpsons", develop = true}
 jinja2 = "^3.1.4"
 
 [tool.poetry.group.test.dependencies]
+pytest = "^8.3.3"
+
+[tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 
 [build-system]

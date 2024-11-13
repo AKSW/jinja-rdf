@@ -209,4 +209,4 @@ url = "../simpsons"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "963267806fcadd5db571bc94e1ead67a680ac3048aeba66cb4ad12a4a1e92371"
+content-hash = "2efdc2c88e76a417b602f0b1995770050720566c926a5c660249e8d7551bcca6"
