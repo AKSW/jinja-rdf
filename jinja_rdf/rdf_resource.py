@@ -4,6 +4,7 @@ from rdflib.paths import Path
 from rdflib.term import (
     Node,
 )
+from rdflib import BNode, URIRef
 
 _PredicateType = Node
 
@@ -19,6 +20,18 @@ class RDFResource(RDFLibResource):
             predicate = from_n3(predicate)
         return self._resources(self._graph.subjects(predicate, self._identifier))
 
+    def _cast(self, node):
+        if isinstance(node, (BNode, URIRef)):
+            return self._new(node)
+        elif isinstance(node, (RDFLibResource)):
+            return self._new(node.identifier)
+        else:
+            return node
+
     def _cast_list(self, list):
         for item in list:
             yield self._cast(item)
+
+
+def cast(resource: RDFLibResource):
+    return RDFResource(resource.graph, resource.identifier)

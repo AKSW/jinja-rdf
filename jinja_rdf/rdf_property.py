@@ -1,9 +1,11 @@
 from rdflib import URIRef
 from rdflib.resource import Resource as RDFLibResource
-from .rdf_resource import RDFResource
+from rdflib.util import from_n3
+
 
 def rdf_property(resource: RDFLibResource, property: str | URIRef):
-    return RDFResource._cast(None, resource)[property]
+    return resource.objects(from_n3(property))
+
 
 def rdf_inverse_property(resource: RDFLibResource, property: str | URIRef):
-    return RDFResource._cast(None, resource).subjects(property)
+    return resource.subjects(from_n3(property))
