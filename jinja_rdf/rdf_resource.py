@@ -1,4 +1,4 @@
-from rdflib.resource import Resource as RDFResource
+from rdflib.resource import Resource as RDFLibResource
 from rdflib.util import from_n3
 from rdflib.paths import Path
 from rdflib.term import (
@@ -8,7 +8,7 @@ from rdflib.term import (
 _PredicateType = Node
 
 
-class Resource(RDFResource):
+class RDFResource(RDFLibResource):
     def __getitem__(self, item):
         if isinstance(item, str):
             return self._cast_list(super().__getitem__(from_n3(item)))

@@ -1,6 +1,6 @@
 from rdflib import Graph
-from jinja_rdf.resource import Resource
-from jinja_rdf.property import property, inv_property
+from jinja_rdf.rdf_resource import RDFResource as Resource
+from jinja_rdf.rdf_property import rdf_property, rdf_inverse_property
 from simpsons_rdf import simpsons, SIM, FAM
 from rdflib.namespace import FOAF
 from undent import undent
@@ -25,8 +25,8 @@ def test_object_list():
 def test_chaining_with_property():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
-    environment.filters["property"] = property
-    environment.filters["inv_property"] = inv_property
+    environment.filters["property"] = rdf_property
+    environment.filters["inv_property"] = rdf_inverse_property
     template_str = "Hello, {{ homer[\"" + FOAF.name.n3() + "\"] | join(', ') }}!"
     template_str = undent("""
         Hello, {{ homer[\"""" + FOAF.name.n3() + """\"] | first }}!
@@ -35,25 +35,26 @@ def test_chaining_with_property():
         """)
     print(template_str)
     template = environment.from_string(template_str)
-    assert template.render(homer=homer) == "Hello, Homer Simpson!"
+    assert template.render(homer=homer) == "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson."
 
 def test_inverse_property():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
-    environment.filters["property"] = property
-    environment.filters["inv_property"] = inv_property
+    environment.filters["property"] = rdf_property
+    environment.filters["inv_property"] = rdf_inverse_property
     template_str = "Hello, {{ homer[\"" + FOAF.name.n3() + "\"] | join(', ') }}!"
     template_str = undent("""
         Hello, {{ homer[\"""" + FOAF.name.n3() + """\"] | first }}!
 
         Don't forget to bring a bouquet for {{ homer[\"""" + FAM.hasSpouse.n3() + """\"] | first | property(\"""" + FOAF.name.n3() +  """\") | first }}.
 
-        Also your kids, {{ homer | inv_property(\"""" + FAM.hasFather.n3() + """\") | first | property(\"""" + FOAF.name.n3() +  """\") | first }} are waiting for dinner.
-        Also your kids,
-        {% for kid in homer | inv_property(\"""" + FAM.hasFather.n3() + """\") %}
-            {{ kid | property(\"""" + FOAF.name.n3() +  """\") | first }}
-        {% endfor %} are waiting for dinner.
+        Also your kids, {% for kid in homer | inv_property(\"""" + FAM.hasFather.n3() + """\") %}{% if loop.last %}and {% endif %}{{ kid | property(\"""" + FOAF.name.n3() +  """\") | first }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
         """)
     print(template_str)
     template = environment.from_string(template_str)
-    assert template.render(homer=homer) == "Hello, Homer Simpson!"
+    result = template.render(homer=homer)
+    assert "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson.\n\nAlso your kids, " in result
+    assert " are waiting for dinner." in result
+    assert "Bart Simpson" in result
+    assert "Lisa Simpson" in result
+    assert "Maggie Simpson" in result

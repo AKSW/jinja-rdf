@@ -32,8 +32,8 @@ The following attributes are only relevant in the wider JekyllRDF context:
 Those are the filters provided by JekyllRDF.
 
 - `rdf_get`
-- `rdf_property`
-- `rdf_inverse_property`
-- `sparql_query`
+- `rdf_property`  -> `rdf_property`, `Resource[]`
+- `rdf_inverse_property` -> `rdf_inverse_property`
+- `sparql_query`  -> `sparql_query` (TODO)
 - `rdf_container`
 - `rdf_collection`
