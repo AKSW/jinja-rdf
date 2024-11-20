@@ -4,8 +4,12 @@ from rdflib.util import from_n3
 
 
 def rdf_property(resource: RDFLibResource, property: str | URIRef):
-    return resource.objects(from_n3(property))
+    if isinstance(property, str):
+        property = from_n3(property)
+    return resource.objects(property)
 
 
 def rdf_inverse_property(resource: RDFLibResource, property: str | URIRef):
-    return resource.subjects(from_n3(property))
+    if isinstance(property, str):
+        property = from_n3(property)
+    return resource.subjects(property)

@@ -15,11 +15,6 @@ class RDFResource(RDFLibResource):
             return self._cast_list(super().__getitem__(from_n3(item)))
         return self._cast_list(super().__getitem__(item))
 
-    def subjects(self, predicate: None | Path | _PredicateType | str = None):
-        if isinstance(predicate, str):
-            predicate = from_n3(predicate)
-        return self._resources(self._graph.subjects(predicate, self._identifier))
-
     def _cast(self, node):
         if isinstance(node, (BNode, URIRef)):
             return self._new(node)
