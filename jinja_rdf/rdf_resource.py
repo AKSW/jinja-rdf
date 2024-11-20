@@ -6,14 +6,11 @@ from rdflib.term import (
 )
 from rdflib import BNode, URIRef
 
-_PredicateType = Node
-
-
 class RDFResource(RDFLibResource):
     def __getitem__(self, item):
-        if isinstance(item, str):
-            return self._cast_list(super().__getitem__(from_n3(item)))
-        return self._cast_list(super().__getitem__(item))
+        if isinstance(item, str) and not isinstance(item, URIRef):
+            item = from_n3(item)
+        return super().__getitem__(item)
 
     def _cast(self, node):
         if isinstance(node, (BNode, URIRef)):
@@ -22,11 +19,3 @@ class RDFResource(RDFLibResource):
             return self._new(node.identifier)
         else:
             return node
-
-    def _cast_list(self, list):
-        for item in list:
-            yield self._cast(item)
-
-
-def cast(resource: RDFLibResource):
-    return RDFResource(resource.graph, resource.identifier)

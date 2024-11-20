@@ -1,6 +1,5 @@
 from rdflib import Graph
 from jinja_rdf.rdf_resource import RDFResource as Resource
-from jinja_rdf.rdf_resource import cast as rdf_cast
 from jinja_rdf.rdf_property import rdf_property, rdf_inverse_property
 from simpsons_rdf import simpsons, SIM, FAM
 from rdflib.namespace import FOAF
