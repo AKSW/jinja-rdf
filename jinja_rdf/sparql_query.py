@@ -4,5 +4,4 @@ from .rdf_resource import RDFResource
 
 
 def sparql_query(resource: RDFLibResource, query: str):
-    graph.query(query)
-    return RDFResource._cast(None, resource)[property]
+    return resource.graph.query(query, initBindings={"resourceUri": resource.identifier})
