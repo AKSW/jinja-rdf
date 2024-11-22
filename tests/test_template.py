@@ -122,3 +122,39 @@ def test_inverse_property():
     assert "Bart Simpson" in result
     assert "Lisa Simpson" in result
     assert "Maggie Simpson" in result
+
+def test_sparql():
+    homer = Resource(simpsons.graph, SIM.Homer)
+    environment = jinja2.Environment()
+    environment.filters["property"] = rdf_property
+    environment.filters["inv_property"] = rdf_inverse_property
+    template_str = 'Hello, {{ homer["' + FOAF.name.n3() + "\"] | join(', ') }}!"
+    template_str = undent(
+        """
+        Hello, {{ homer[\""""
+        + FOAF.name.n3()
+        + """\"] | first }}!
+
+        Don't forget to bring a bouquet for {{ homer[\""""
+        + FAM.hasSpouse.n3()
+        + """\"] | first | property(\""""
+        + FOAF.name.n3()
+        + """\") | first }}.
+
+        Also your kids, {% for kid in homer | inv_property(\""""
+        + FAM.hasFather.n3()
+        + """\") %}{% if loop.last %}and {% endif %}{{ kid | property(\""""
+        + FOAF.name.n3()
+        + """\") | first }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
+        """
+    )
+    template = environment.from_string(template_str)
+    result = template.render(homer=homer)
+    assert (
+        "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson.\n\nAlso your kids, "
+        in result
+    )
+    assert " are waiting for dinner." in result
+    assert "Bart Simpson" in result
+    assert "Lisa Simpson" in result
+    assert "Maggie Simpson" in result

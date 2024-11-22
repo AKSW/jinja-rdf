@@ -6,7 +6,7 @@ from rdflib import Literal
 from undent import undent
 
 
-def test_sparql():
+def test_sparql_select():
     homer = Resource(simpsons.graph, SIM.Homer)
     bindings = sparql_query(homer, undent("""
         select ?resourceUri ?name {
@@ -16,3 +16,17 @@ def test_sparql():
     for row in bindings:
         assert row["resourceUri"] == SIM.Homer
         assert row["name"] == Literal("Homer Simpson")
+
+def test_sparql_construct():
+    homer = Resource(simpsons.graph, SIM.Homer)
+    graph = sparql_query(homer, undent("""
+        construct {
+            ?resourceUri foaf:name ?name
+        } where {
+            ?resourceUri foaf:name ?name
+        }
+    """))
+    for s, p, o in graph:
+        assert s == SIM.Homer
+        assert p == FOAF.name
+        assert o == Literal("Homer Simpson")
