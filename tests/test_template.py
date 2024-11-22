@@ -1,6 +1,6 @@
 from rdflib import Graph
 from jinja_rdf.rdf_resource import RDFResource as Resource
-from jinja_rdf.rdf_property import rdf_property, rdf_inverse_property
+from jinja_rdf.rdf_property import rdf_property, rdf_inverse_property, rdf_properties, rdf_inverse_properties
 from simpsons_rdf import simpsons, SIM, FAM
 from rdflib.namespace import FOAF
 from rdflib.resource import Resource as RDFLibResource
@@ -21,7 +21,7 @@ def test_resource_property():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
-    template_str = 'Hello, {{ homer | property("' + FOAF.name.n3() + '") | first }}!'
+    template_str = 'Hello, {{ homer | property("' + FOAF.name.n3() + '") }}!'
     print(template_str)
     template = environment.from_string(template_str)
     assert template.render(homer=homer) == "Hello, Homer Simpson!"
@@ -58,7 +58,7 @@ def test_chaining_with_property():
         + FAM.hasSpouse.n3()
         + """\"] | first | property(\""""
         + FOAF.name.n3()
-        + """\") | first }}.
+        + """\") }}.
         """
     )
     template = environment.from_string(template_str)
@@ -71,7 +71,6 @@ def test_chaining_with_resource_item():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
-    environment.filters["inv_property"] = rdf_inverse_property
     template_str = undent(
         """
         Hello, {{ homer[\"""" + FOAF.name.n3() + """\"] | first }}!
@@ -92,7 +91,7 @@ def test_inverse_property():
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
     environment.filters["inv_property"] = rdf_inverse_property
-    template_str = 'Hello, {{ homer["' + FOAF.name.n3() + "\"] | join(', ') }}!"
+    environment.filters["inv_properties"] = rdf_inverse_properties
     template_str = undent(
         """
         Hello, {{ homer[\""""
@@ -103,13 +102,13 @@ def test_inverse_property():
         + FAM.hasSpouse.n3()
         + """\"] | first | property(\""""
         + FOAF.name.n3()
-        + """\") | first }}.
+        + """\") }}.
 
-        Also your kids, {% for kid in homer | inv_property(\""""
+        Also your kids, {% for kid in homer | inv_properties(\""""
         + FAM.hasFather.n3()
         + """\") %}{% if loop.last %}and {% endif %}{{ kid | property(\""""
         + FOAF.name.n3()
-        + """\") | first }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
+        + """\") }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
         """
     )
     template = environment.from_string(template_str)
@@ -127,8 +126,7 @@ def test_sparql():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
-    environment.filters["inv_property"] = rdf_inverse_property
-    template_str = 'Hello, {{ homer["' + FOAF.name.n3() + "\"] | join(', ') }}!"
+    environment.filters["inv_properties"] = rdf_inverse_properties
     template_str = undent(
         """
         Hello, {{ homer[\""""
@@ -139,13 +137,13 @@ def test_sparql():
         + FAM.hasSpouse.n3()
         + """\"] | first | property(\""""
         + FOAF.name.n3()
-        + """\") | first }}.
+        + """\") }}.
 
-        Also your kids, {% for kid in homer | inv_property(\""""
+        Also your kids, {% for kid in homer | inv_properties(\""""
         + FAM.hasFather.n3()
         + """\") %}{% if loop.last %}and {% endif %}{{ kid | property(\""""
         + FOAF.name.n3()
-        + """\") | first }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
+        + """\") }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
         """
     )
     template = environment.from_string(template_str)
