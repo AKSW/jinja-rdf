@@ -67,6 +67,25 @@ def test_chaining_with_property():
         == "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson."
     )
 
+def test_chaining_with_resource_item():
+    homer = Resource(simpsons.graph, SIM.Homer)
+    environment = jinja2.Environment()
+    environment.filters["property"] = rdf_property
+    environment.filters["inv_property"] = rdf_inverse_property
+    template_str = undent(
+        """
+        Hello, {{ homer[\"""" + FOAF.name.n3() + """\"] | first }}!
+
+        {% set marge = homer[\"""" + FAM.hasSpouse.n3() + """\"] | first -%}
+        Don't forget to bring a bouquet for {{ marge["foaf:name"] | first }}.
+        """
+    )
+    template = environment.from_string(template_str)
+    assert (
+        template.render(homer=homer)
+        == "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson."
+    )
+
 
 def test_inverse_property():
     homer = Resource(simpsons.graph, SIM.Homer)
