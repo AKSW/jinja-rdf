@@ -10,7 +10,6 @@ import jinja2
 
 def test_resource():
     homer = Resource(simpsons.graph, SIM.Homer)
-    print(type(homer))
     environment = jinja2.Environment()
     template_str = 'Hello, {{ homer["' + FOAF.name.n3() + '"] | first }}!'
     print(template_str)
@@ -20,7 +19,6 @@ def test_resource():
 
 def test_resource_property():
     homer = Resource(simpsons.graph, SIM.Homer)
-    print(type(homer))
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
     template_str = 'Hello, {{ homer | property("' + FOAF.name.n3() + '") | first }}!'
@@ -33,7 +31,6 @@ def test_resource_registered_namespace():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     template_str = 'Hello, {{ homer["foaf:name"] | first }}!'
-    print(template_str)
     template = environment.from_string(template_str)
     assert template.render(homer=homer) == "Hello, Homer Simpson!"
 
@@ -42,7 +39,6 @@ def test_object_list():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     template_str = 'Hello, {{ homer["' + FOAF.name.n3() + "\"] | join(', ') }}!"
-    print(template_str)
     template = environment.from_string(template_str)
     assert template.render(homer=homer) == "Hello, Homer Simpson!"
 
@@ -65,7 +61,6 @@ def test_chaining_with_property():
         + """\") | first }}.
         """
     )
-    print(template_str)
     template = environment.from_string(template_str)
     assert (
         template.render(homer=homer)
@@ -98,7 +93,6 @@ def test_inverse_property():
         + """\") | first }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
         """
     )
-    print(template_str)
     template = environment.from_string(template_str)
     result = template.render(homer=homer)
     assert (
