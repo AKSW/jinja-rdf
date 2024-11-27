@@ -1,6 +1,7 @@
 from rdflib import Graph
 from jinja_rdf.rdf_resource import RDFResource as Resource
 from jinja_rdf.rdf_property import rdf_property, rdf_inverse_property, rdf_properties, rdf_inverse_properties
+from jinja_rdf.sparql_query import sparql_query
 from simpsons_rdf import simpsons, SIM, FAM
 from rdflib.namespace import FOAF
 from rdflib.resource import Resource as RDFLibResource
@@ -127,31 +128,27 @@ def test_sparql():
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
     environment.filters["inv_properties"] = rdf_inverse_properties
+    environment.filters["sparql_query"] = sparql_query
+
+    query = undent("""select ?kid ?name {
+        ?kid fam:hasFather ?resourceUri ;
+            foaf:name ?name .
+    }""")
+
     template_str = undent(
         """
-        Hello, {{ homer[\""""
-        + FOAF.name.n3()
-        + """\"] | first }}!
+        Hello, {{ homer[\"""" + FOAF.name.n3() + """\"] | first }}!
 
-        Don't forget to bring a bouquet for {{ homer[\""""
-        + FAM.hasSpouse.n3()
-        + """\"] | first | property(\""""
-        + FOAF.name.n3()
-        + """\") }}.
-
-        Also your kids, {% for kid in homer | inv_properties(\""""
-        + FAM.hasFather.n3()
-        + """\") %}{% if loop.last %}and {% endif %}{{ kid | property(\""""
-        + FOAF.name.n3()
-        + """\") }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
+        Also your kids, {% for row in homer | sparql_query(\"""" + query + """\") %}{% if loop.last %}and {% endif %}{{ row["name"] }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
         """
     )
     template = environment.from_string(template_str)
     result = template.render(homer=homer)
     assert (
-        "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson.\n\nAlso your kids, "
+        "Hello, Homer Simpson!"
         in result
     )
+    assert "Also your kids, " in result
     assert " are waiting for dinner." in result
     assert "Bart Simpson" in result
     assert "Lisa Simpson" in result
