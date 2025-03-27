@@ -16,3 +16,6 @@ class RDFResource(RDFLibResource):
             return self._new(node.identifier)
         else:
             return node
+
+    def n3(self):
+        return self._identifier.n3()
