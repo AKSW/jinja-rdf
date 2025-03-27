@@ -16,3 +16,10 @@ tasks:
     desc: Run pytest
     cmds:
       - poetry run pytest
+
+  format:
+    desc: Format the code
+    aliases: ["ruff"]
+    cmds:
+      - poetry run ruff format
+      - poetry run ruff check --fix
