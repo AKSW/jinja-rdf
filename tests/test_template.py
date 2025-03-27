@@ -1,10 +1,12 @@
-from rdflib import Graph
 from jinja_rdf.rdf_resource import RDFResource as Resource
-from jinja_rdf.rdf_property import rdf_property, rdf_inverse_property, rdf_properties, rdf_inverse_properties
+from jinja_rdf.rdf_property import (
+    rdf_property,
+    rdf_inverse_property,
+    rdf_inverse_properties,
+)
 from jinja_rdf.sparql_query import sparql_query
 from simpsons_rdf import simpsons, SIM, FAM
 from rdflib.namespace import FOAF
-from rdflib.resource import Resource as RDFLibResource
 from undent import undent
 import jinja2
 
@@ -68,15 +70,20 @@ def test_chaining_with_property():
         == "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson."
     )
 
+
 def test_chaining_with_resource_item():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
     template_str = undent(
         """
-        Hello, {{ homer[\"""" + FOAF.name.n3() + """\"] | first }}!
+        Hello, {{ homer[\""""
+        + FOAF.name.n3()
+        + """\"] | first }}!
 
-        {% set marge = homer[\"""" + FAM.hasSpouse.n3() + """\"] | first -%}
+        {% set marge = homer[\""""
+        + FAM.hasSpouse.n3()
+        + """\"] | first -%}
         Don't forget to bring a bouquet for {{ marge["foaf:name"] | first }}.
         """
     )
@@ -123,6 +130,7 @@ def test_inverse_property():
     assert "Lisa Simpson" in result
     assert "Maggie Simpson" in result
 
+
 def test_sparql():
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
@@ -137,17 +145,18 @@ def test_sparql():
 
     template_str = undent(
         """
-        Hello, {{ homer[\"""" + FOAF.name.n3() + """\"] | first }}!
+        Hello, {{ homer[\""""
+        + FOAF.name.n3()
+        + """\"] | first }}!
 
-        Also your kids, {% for row in homer | sparql_query(\"""" + query + """\") %}{% if loop.last %}and {% endif %}{{ row["name"] }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
+        Also your kids, {% for row in homer | sparql_query(\""""
+        + query
+        + """\") %}{% if loop.last %}and {% endif %}{{ row["name"] }}{% if not loop.last %}, {% endif %}{% endfor %} are waiting for dinner.
         """
     )
     template = environment.from_string(template_str)
     result = template.render(homer=homer)
-    assert (
-        "Hello, Homer Simpson!"
-        in result
-    )
+    assert "Hello, Homer Simpson!" in result
     assert "Also your kids, " in result
     assert " are waiting for dinner." in result
     assert "Bart Simpson" in result

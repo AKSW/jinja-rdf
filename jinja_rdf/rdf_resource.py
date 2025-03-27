@@ -1,10 +1,7 @@
 from rdflib.resource import Resource as RDFLibResource
 from rdflib.util import from_n3
-from rdflib.paths import Path
-from rdflib.term import (
-    Node,
-)
 from rdflib import BNode, URIRef
+
 
 class RDFResource(RDFLibResource):
     def __getitem__(self, item):

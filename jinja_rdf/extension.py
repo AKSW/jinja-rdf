@@ -3,8 +3,12 @@ from jinja2.ext import Extension
 
 class RDFExtension(Extension):
     tags = {"property", "inverse_property", "properties", "inverse_properties", "query"}
-    jekyll_compatibility_tags = {"rdf_property", "rdf_inverse_property", "sparql_query", "rdf_get"}
-
+    jekyll_compatibility_tags = {
+        "rdf_property",
+        "rdf_inverse_property",
+        "sparql_query",
+        "rdf_get",
+    }
 
     def __init__(self, environment):
         super().__init__(environment)
