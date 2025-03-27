@@ -4,9 +4,14 @@ from rdflib import BNode, URIRef
 
 
 class RDFResource(RDFLibResource):
+    def __init__(self, graph, subject, namespace_manager=None):
+        if namespace_manager:
+            self.namespace_manager = namespace_manager
+        super().__init__(graph, subject)
+
     def __getitem__(self, item):
         if isinstance(item, str) and not isinstance(item, URIRef):
-            item = from_n3(item)
+            item = from_n3(item, nsm=self.namespace_manager)
         return super().__getitem__(item)
 
     def _cast(self, node):

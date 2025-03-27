@@ -15,7 +15,7 @@ def rdf_properties(
     if isinstance(resource, str) and not isinstance(resource, URIRef):
         resource = from_n3(resource, nsm=context["namespace_manager"])
     if isinstance(resource, URIRef):
-        resource = RDFResource(context["graph"], resource)
+        resource = RDFResource(context["graph"], resource, context["namespace_manager"])
     return resource.objects(property)
 
 
@@ -28,7 +28,7 @@ def rdf_inverse_properties(
     if isinstance(resource, str) and not isinstance(resource, URIRef):
         resource = from_n3(resource, nsm=context["namespace_manager"])
     if isinstance(resource, URIRef):
-        resource = RDFResource(context["graph"], resource)
+        resource = RDFResource(context["graph"], resource, context["namespace_manager"])
     return resource.subjects(property)
 
 
