@@ -11,13 +11,13 @@ def test_sparql_select():
     bindings = sparql_query(
         homer,
         undent("""
-        select ?resourceUri ?name {
-            ?resourceUri foaf:name ?name
+        select ?resourceIri ?name {
+            ?resourceIri foaf:name ?name
         }
     """),
     )
     for row in bindings:
-        assert row["resourceUri"] == SIM.Homer
+        assert row["resourceIri"] == SIM.Homer
         assert row["name"] == Literal("Homer Simpson")
 
 
@@ -27,9 +27,9 @@ def test_sparql_construct():
         homer,
         undent("""
         construct {
-            ?resourceUri foaf:name ?name
+            ?resourceIri foaf:name ?name
         } where {
-            ?resourceUri foaf:name ?name
+            ?resourceIri foaf:name ?name
         }
     """),
     )
