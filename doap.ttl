@@ -1,0 +1,7 @@
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://github.com/white-gecko/jinja-rdf> a doap:Project ;
+    doap:name "Jinja-RDF" ;
+    doap:description "This project aims at providing the necessary means to render contents of and RDF Graph with [RDFLib](https://rdflib.readthedocs.io/) in a [Jinja](https://jinja.palletsprojects.com/en/3.0.x/) (jinja2) template." ;
+    doap:developer <https://github.com/white-gecko>, <https://natanael.arndt.xyz/#i> .
