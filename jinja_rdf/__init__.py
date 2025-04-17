@@ -6,6 +6,7 @@ from .rdf_property import (
 )
 from .sparql_query import sparql_query
 
+
 def register_filters(environment):
     """Register all jinja-rdf filters on a jinja environment."""
     environment.filters["properties"] = rdf_properties
