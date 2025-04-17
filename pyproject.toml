@@ -3,7 +3,7 @@ name = "jinja-rdf"
 version = "0.1.0"
 description = ""
 authors = ["Natanael Arndt <arndtn@gmail.com>"]
-license = "GPLv3"
+license = "EUPL"
 readme = "README.md"
 
 [tool.poetry.dependencies]
