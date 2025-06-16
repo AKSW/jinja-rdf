@@ -5,8 +5,7 @@ from rdflib import BNode, URIRef
 
 class RDFResource(RDFLibResource):
     def __init__(self, graph, subject, namespace_manager=None):
-        if namespace_manager:
-            self.namespace_manager = namespace_manager
+        self.namespace_manager = namespace_manager
         super().__init__(graph, subject)
 
     def __getitem__(self, item):
