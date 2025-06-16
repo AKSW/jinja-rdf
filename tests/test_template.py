@@ -9,44 +9,50 @@ from simpsons_rdf import simpsons, SIM, FAM
 from rdflib.namespace import FOAF
 from undent import undent
 import jinja2
+from .helper import mock_context
 
 
 def test_resource():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     template_str = 'Hello, {{ homer["' + FOAF.name.n3() + '"] | first }}!'
     print(template_str)
     template = environment.from_string(template_str)
-    assert template.render(homer=homer) == "Hello, Homer Simpson!"
+    assert template.render(**ctx, homer=homer) == "Hello, Homer Simpson!"
 
 
 def test_resource_property():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
     template_str = 'Hello, {{ homer | property("' + FOAF.name.n3() + '") }}!'
     print(template_str)
     template = environment.from_string(template_str)
-    assert template.render(homer=homer) == "Hello, Homer Simpson!"
+    assert template.render(**ctx, homer=homer) == "Hello, Homer Simpson!"
 
 
 def test_resource_registered_namespace():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     template_str = 'Hello, {{ homer["foaf:name"] | first }}!'
     template = environment.from_string(template_str)
-    assert template.render(homer=homer) == "Hello, Homer Simpson!"
+    assert template.render(**ctx, homer=homer) == "Hello, Homer Simpson!"
 
 
 def test_object_list():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     template_str = 'Hello, {{ homer["' + FOAF.name.n3() + "\"] | join(', ') }}!"
     template = environment.from_string(template_str)
-    assert template.render(homer=homer) == "Hello, Homer Simpson!"
+    assert template.render(**ctx, homer=homer) == "Hello, Homer Simpson!"
 
 
 def test_chaining_with_property():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
@@ -66,12 +72,13 @@ def test_chaining_with_property():
     )
     template = environment.from_string(template_str)
     assert (
-        template.render(homer=homer)
+        template.render(**ctx, homer=homer)
         == "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson."
     )
 
 
 def test_chaining_with_resource_item():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
@@ -89,12 +96,13 @@ def test_chaining_with_resource_item():
     )
     template = environment.from_string(template_str)
     assert (
-        template.render(homer=homer)
+        template.render(**ctx, homer=homer)
         == "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson."
     )
 
 
 def test_inverse_property():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
@@ -120,7 +128,7 @@ def test_inverse_property():
         """
     )
     template = environment.from_string(template_str)
-    result = template.render(homer=homer)
+    result = template.render(**ctx, homer=homer)
     assert (
         "Hello, Homer Simpson!\n\nDon't forget to bring a bouquet for Marge Simpson.\n\nAlso your kids, "
         in result
@@ -132,6 +140,7 @@ def test_inverse_property():
 
 
 def test_sparql():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     environment = jinja2.Environment()
     environment.filters["property"] = rdf_property
@@ -155,7 +164,7 @@ def test_sparql():
         """
     )
     template = environment.from_string(template_str)
-    result = template.render(homer=homer)
+    result = template.render(**ctx, homer=homer)
     assert "Hello, Homer Simpson!" in result
     assert "Also your kids, " in result
     assert " are waiting for dinner." in result
