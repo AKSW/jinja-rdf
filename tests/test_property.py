@@ -8,6 +8,7 @@ from rdflib.namespace import FOAF
 from rdflib import Literal
 from .helper import mock_context
 
+
 def test_resource_property_n3():
     ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)

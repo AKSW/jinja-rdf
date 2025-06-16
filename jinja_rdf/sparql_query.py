@@ -7,7 +7,9 @@ from jinja2.runtime import Context
 
 
 @pass_context
-def sparql_query(context: Context, input: RDFLibResource | Graph | URIRef, query: str, **kwargs):
+def sparql_query(
+    context: Context, input: RDFLibResource | Graph | URIRef, query: str, **kwargs
+):
     if isinstance(input, Graph):
         graph = input
         resourceIri = input.identifier
