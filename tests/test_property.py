@@ -7,37 +7,45 @@ from simpsons_rdf import simpsons, SIM, FAM
 from rdflib.namespace import FOAF
 from rdflib import Literal
 
+def mock_context():
+    return {"namespace_manager": None}
+
 def test_resource_property_n3():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
-    name = rdf_property(homer, FOAF.name.n3())
+    name = rdf_property(ctx, homer, FOAF.name.n3())
     assert Literal("Homer Simpson") == name
 
 
 def test_resource_property():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
-    name = rdf_property(homer, FOAF.name)
+    name = rdf_property(ctx, homer, FOAF.name)
     assert Literal("Homer Simpson") == name
 
 
 def test_inverse_property_n3():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
-    kids = list(rdf_inverse_properties(homer, FAM.hasFather.n3()))
+    kids = list(rdf_inverse_properties(ctx, homer, FAM.hasFather.n3()))
     assert Resource(simpsons.graph, SIM.Bart) in kids
     assert Resource(simpsons.graph, SIM.Lisa) in kids
     assert Resource(simpsons.graph, SIM.Maggie) in kids
 
 
 def test_inverse_property():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
-    kids = list(rdf_inverse_properties(homer, FAM.hasFather))
+    kids = list(rdf_inverse_properties(ctx, homer, FAM.hasFather))
     assert Resource(simpsons.graph, SIM.Bart) in kids
     assert Resource(simpsons.graph, SIM.Lisa) in kids
     assert Resource(simpsons.graph, SIM.Maggie) in kids
 
 
 def test_chained_property():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
-    kids = list(rdf_inverse_properties(homer, FAM.hasFather))
+    kids = list(rdf_inverse_properties(ctx, homer, FAM.hasFather))
     names = []
     for kid in kids:
         assert isinstance(kid, Resource)
