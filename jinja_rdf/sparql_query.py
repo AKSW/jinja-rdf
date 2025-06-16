@@ -19,6 +19,9 @@ def sparql_query(
     if isinstance(input, URIRef):
         graph = context["graph"]
         resourceIri = input
+    namespaces = None
+    if "namespace_manager" in context and context["namespace_manager"]:
+        namespaces = dict(context["namespace_manager"].namespaces())
     return graph.query(
         query,
         initBindings={
@@ -27,5 +30,5 @@ def sparql_query(
             "resourceUri": resourceIri,
             "graphIri": graph.identifier,
         },
-        initNs=dict(context["namespace_manager"].namespaces()),
+        initNs=namespaces,
     )
