@@ -6,9 +6,7 @@ from jinja_rdf.rdf_property import (
 from simpsons_rdf import simpsons, SIM, FAM
 from rdflib.namespace import FOAF
 from rdflib import Literal
-
-def mock_context():
-    return {"namespace_manager": None}
+from .helper import mock_context
 
 def test_resource_property_n3():
     ctx = mock_context()
