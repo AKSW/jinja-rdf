@@ -20,7 +20,7 @@ def sparql_query(
         graph = context["graph"]
         resourceIri = input
     namespaces = None
-    if "namespace_manager" in context and context["namespace_manager"]:
+    if context["namespace_manager"]:
         namespaces = dict(context["namespace_manager"].namespaces())
     return graph.query(
         query,
