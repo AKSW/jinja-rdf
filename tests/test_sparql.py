@@ -4,11 +4,14 @@ from simpsons_rdf import simpsons, SIM
 from rdflib.namespace import FOAF
 from rdflib import Literal
 from undent import undent
+from .helper import mock_context
 
 
 def test_sparql_select():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     bindings = sparql_query(
+        ctx,
         homer,
         undent("""
         select ?resourceIri ?name {
@@ -22,8 +25,10 @@ def test_sparql_select():
 
 
 def test_sparql_construct():
+    ctx = mock_context()
     homer = Resource(simpsons.graph, SIM.Homer)
     graph = sparql_query(
+        ctx,
         homer,
         undent("""
         construct {
