@@ -133,7 +133,7 @@ class GraphToFilesystemHelper:
 
         fragment = iri.fragment
 
-        if base_iri and not self.iri_is_relative_to(iri, base_iri):
+        if base_iri and not self.iri_is_relative_to(iri):
             fragment = ""
         if not fragment and fallback_generate:
             return md5(urlunsplit(iri))
