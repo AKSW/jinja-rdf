@@ -75,27 +75,33 @@ class GraphToFilesystemHelper:
         self,
         iri: IRIRef_or_Parts,
     ) -> tuple[Path | None, str | None]:
-        """Convert an IRI to a relative filesystem path.
+        """Convert an IRI to a relative filesystem path and optionally a fragment idnetifier.
 
         If the iri matches the base_iri, it is trimmed.
-        If the iri does not match the base_iri resp. is not relative to it, the path
-        will represent the complete iri and be put under collect_outside if it is
-        specified.
+        If the iri does not match the base_iri resp. is not relative to it:
+        either, if collect_outside is set, the path will represent the complete iri
+        and be put under collect_outside.
+        Else None, None is returned.
+
+        If a fragment identifier is detected it is split of the IRI and is
+        returned in the second position of the tuple
         """
         iri, base_iri = split_iris(iri, self.base_iri)
 
         if self.iri_is_relative_to(iri):
             """iri is relative to the base. Just convert the remaining part."""
-            resulting_path = PosixPath(iri.path).relative_to(base_iri.path)
+            resulting_path = IRIPath(iri.path).relative_to(base_iri.path)
             if self.base_path:
-                resulting_path = base_path.joinpath(resulting_path)
+                resulting_path = self.base_path.joinpath(resulting_path)
+            if iri.query:
+                resulting_path += "?" + iri.query
             return resulting_path + "?" + iri.query, self.get_fragment_id(iri)
 
         if self.collect_outside:
             """iri is not relative to the base. convert schema, netloc, path and query to a path."""
-            resulting_path = PosixPath(f"{iri.schema}_{iri.netloc}") / iri.path
+            resulting_path = IRIPath(f"{iri.schema}_{iri.netloc}") / iri.path
             if self.base_path:
-                resulting_path = base_path.joinpath(resulting_path)
+                resulting_path = self.base_path.joinpath(resulting_path)
             return resulting_path, self.get_fragment_id(iri)
 
         return None, None
@@ -115,7 +121,7 @@ class GraphToFilesystemHelper:
         iri: IRIRef_or_Parts,
         fallback_generate: bool = False,
     ) -> str | None:
-        """Get the fragement identifier of an IRI or optionally generate an md5 sum
+        """Get the fragment identifier of an IRI or optionally generate an md5 sum
         of the iri to use as an identifier, if none is present.
 
         base_iri (default: None): Only return the frament identifier, if the iri is
@@ -127,7 +133,7 @@ class GraphToFilesystemHelper:
 
         fragment = iri.fragment
 
-        if base_iri and not iri_is_relative_to(iri, base_iri):
+        if base_iri and not self.iri_is_relative_to(iri, base_iri):
             fragment = ""
         if not fragment and fallback_generate:
             return md5(urlunsplit(iri))
@@ -136,7 +142,7 @@ class GraphToFilesystemHelper:
     def iri_is_relative_to(self, iri: IRIRef_or_Parts):
         """Check if an IRI is relative to some base IRI."""
         iri, base_iri = split_iris(iri, self.base_iri)
-        return base_iri[0:1] == iri[0:1] and PosixPath(iri.path).is_relative_to(
+        return base_iri[0:1] == iri[0:1] and IRIPath(iri.path).is_relative_to(
             base_iri.path
         )
 
@@ -147,3 +153,5 @@ def split_iris(*args):
     for iri in args:
         if iri and not isinstance(iri, SplitResult):
             yield urlsplit(iri)
+        else:
+            yield iri
