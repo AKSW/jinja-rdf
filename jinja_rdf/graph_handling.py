@@ -31,7 +31,7 @@ class IRIPath(PurePosixPath):
         else:
             parts = self.parts[:-1]
             extended_name = self.parts[-1] + name_extension
-        return self.with_segments(parts, extended_name)
+        return self.with_segments(*parts, extended_name)
 
 
 class GraphToFilesystemHelper:
