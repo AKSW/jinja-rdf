@@ -107,14 +107,18 @@ class GraphToFilesystemHelper:
         return None, None
 
     def graph_to_paths(self, graph: Graph, selection: str | None = None):
-        """Return a list of paths based on a selection query.
-        The selection query must bind a variable ?resourceIri."""
+        """Return a list of nodes, paths, and fragments based on a selection query.
+        The selection query must bind a variable ?resourceIri.
+        The returned tuple:
+        - a node representing the ?resourceIri,
+        - the path representing the node
+        - optionally a fragment that was attached to the ?resourceIri."""
         if selection is None:
             selection = """select distinct ?resourceIri { ?resourceIri ?p ?o } """
         for row in graph.query(selection):
             path, fragment = self.node_to_path(row.resourceIri)
             if path:
-                yield path, fragment
+                yield row.resourceIri, path, fragment
 
     def get_fragment_id(
         self,
