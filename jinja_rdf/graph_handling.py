@@ -110,7 +110,7 @@ class GraphToFilesystemHelper:
         """Return a list of paths based on a selection query.
         The selection query must bind a variable ?resourceIri."""
         if selection is None:
-            selection = """select ?resourceIri { ?resourceIri ?p ?o } """
+            selection = """select distinct ?resourceIri { ?resourceIri ?p ?o } """
         for row in graph.query(selection):
             yield self.node_to_path(
                 row.resourceIri,
