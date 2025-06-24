@@ -95,7 +95,7 @@ class GraphToFilesystemHelper:
                 resulting_path = self.base_path.joinpath(resulting_path)
             if iri.query:
                 resulting_path += "?" + iri.query
-            return resulting_path + "?" + iri.query, self.get_fragment_id(iri)
+            return resulting_path, self.get_fragment_id(iri)
 
         if self.collect_outside:
             """iri is not relative to the base. convert schema, netloc, path and query to a path."""
