@@ -112,9 +112,9 @@ class GraphToFilesystemHelper:
         if selection is None:
             selection = """select distinct ?resourceIri { ?resourceIri ?p ?o } """
         for row in graph.query(selection):
-            yield self.node_to_path(
-                row.resourceIri,
-            )
+            path, fragment = self.node_to_path(row.resourceIri)
+            if path:
+                yield path, fragment
 
     def get_fragment_id(
         self,
