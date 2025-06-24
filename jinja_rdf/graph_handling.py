@@ -3,7 +3,7 @@ generation and templating."""
 
 from urllib.parse import urlsplit, urlunsplit, SplitResult
 from rdflib import Graph, URIRef, BNode, IdentifiedNode
-from pathlib import Path, PosixPath
+from pathlib import Path, PurePosixPath
 from hashlib import md5
 
 from typing import TypeAlias
@@ -12,6 +12,26 @@ from typing import TypeAlias
 urllib.parse.urlsplit"""
 IRIRef_or_Parts: TypeAlias = URIRef | SplitResult
 Node_or_Parts: TypeAlias = IdentifiedNode | IRIRef_or_Parts
+
+
+class IRIPath(PurePosixPath):
+    """Mainly a wrapper for a PurePosixPath that preserves a trailing slash."""
+
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.trailing_slash = "/" if args[-1][-1] == "/" else ""
+
+    def __str__(self):
+        return super().__str__() + self.trailing_slash
+
+    def __add__(self, name_extension: str):
+        if self.trailing_slash:
+            parts = self.parts
+            extended_name = name_extension
+        else:
+            parts = self.parts[:-1]
+            extended_name = self.parts[-1] + name_extension
+        return self.with_segments(parts, extended_name)
 
 
 class GraphToFilesystemHelper:
