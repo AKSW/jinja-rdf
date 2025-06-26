@@ -5,6 +5,7 @@ from urllib.parse import urlsplit, urlunsplit, SplitResult
 from rdflib import Graph, URIRef, BNode, IdentifiedNode
 from pathlib import Path, PurePosixPath
 from hashlib import md5
+from loguru import logger
 
 from typing import TypeAlias
 
@@ -12,6 +13,9 @@ from typing import TypeAlias
 urllib.parse.urlsplit"""
 IRIRef_or_Parts: TypeAlias = URIRef | SplitResult
 Node_or_Parts: TypeAlias = IdentifiedNode | IRIRef_or_Parts
+
+QUERY_SELECTION_RELATIVE = 'SELECT ?resourceIri { ?resourceIri ?p ?o . FILTER regex(str(?resourceIri), concat("^", str(?base_iri))) }'
+QUERY_SELECTION_ALL = "SELECT ?resourceIri { ?resourceIri ?p ?o }"
 
 
 class IRIPath(PurePosixPath):
@@ -106,19 +110,72 @@ class GraphToFilesystemHelper:
 
         return None, None
 
-    def graph_to_paths(self, graph: Graph, selection: str | None = None):
-        """Return a list of nodes, paths, and fragments based on a selection query.
+    def selection_to_nodes(
+        self, selection: str | None = None, graph: Graph | None = None
+    ):
+        """Return a list of nodes based on a selection query.
         The selection query must bind a variable ?resourceIri.
+        """
+        if isinstance(selection, str) and selection.lower() == "none":
+            return []
+
+        if "preset" in selection and selection["preset"] == "none":
+            return []
+
+        queries = []
+        iri_list = []
+        file_names = []
+
+        if "file" in selection and selection["file"]:
+            file_names += selection["file"]
+        if "files" in selection and selection["files"]:
+            file_names += selection["files"]
+
+        for file_name in file_names:
+            with open(file_name, "r") as file_object:
+                iri_list += list(file_object)
+
+        if "list" in selection and selection["list"]:
+            iri_list += selection["list"]
+
+        for iri in iri_list:
+            yield URIRef(iri.strip())
+
+        logger.debug(queries)
+        if "queries" in selection and selection["queries"]:
+            queries += selection["queries"]
+        if "query" in selection and selection["query"]:
+            queries += [selection["query"]]
+        if "preset" in selection and selection["preset"] == "subject_all":
+            queries += [QUERY_SELECTION_ALL]
+        if (not queries and not iri_list) or (
+            "preset" in selection and selection["preset"] == "subject_relative"
+        ):
+            queries += [QUERY_SELECTION_RELATIVE]
+
+        if queries and not graph:
+            raise Exception(
+                "No graph is provided but a query based selection is given."
+            )
+
+        for query in set(queries):
+            logger.debug(f"Execute selection query: {query}")
+            for row in graph.query(
+                query, initBindings={"base_iri": URIRef(self.base_iri)}
+            ):
+                yield row.resourceIri
+
+    def nodes_to_paths(self, nodes: list) -> tuple:
+        """Return a list of nodes, paths, and fragments for the provided nodes.
+        If no path is returned from node_to_path for a node, it is omitted.
         The returned tuple:
-        - a node representing the ?resourceIri,
+        - the node,
         - the path representing the node
-        - optionally a fragment that was attached to the ?resourceIri."""
-        if selection is None:
-            selection = """select distinct ?resourceIri { ?resourceIri ?p ?o } """
-        for row in graph.query(selection):
-            path, fragment = self.node_to_path(row.resourceIri)
+        - optionally a fragment that was attached to the nodes iri."""
+        for node in nodes:
+            path, fragment = self.node_to_path(node)
             if path:
-                yield row.resourceIri, path, fragment
+                yield node, path, fragment
 
     def get_fragment_id(
         self,
