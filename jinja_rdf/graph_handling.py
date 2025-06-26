@@ -129,37 +129,37 @@ class GraphToFilesystemHelper:
         if isinstance(selection, str) and selection.lower() == "none":
             return []
 
-        if "preset" in selection and selection["preset"] == "none":
+        if selection.get("preset") == "none":
             return []
 
         queries = []
         iri_list = []
         file_names = []
 
-        if "file" in selection and selection["file"]:
-            file_names += selection["file"]
-        if "files" in selection and selection["files"]:
+        if selection.get("file"):
+            file_names += [selection["file"]]
+        if selection.get("files"):
             file_names += selection["files"]
 
         for file_name in file_names:
             with open(file_name, "r") as file_object:
                 iri_list += list(file_object)
 
-        if "list" in selection and selection["list"]:
+        if selection.get("list"):
             iri_list += selection["list"]
 
         for iri in iri_list:
             yield URIRef(iri.strip())
 
         logger.debug(queries)
-        if "queries" in selection and selection["queries"]:
-            queries += selection["queries"]
-        if "query" in selection and selection["query"]:
+        if selection.get("query"):
             queries += [selection["query"]]
-        if "preset" in selection and selection["preset"] == "subject_all":
+        if selection.get("queries"):
+            queries += selection["queries"]
+        if selection.get("preset") == "subject_all":
             queries += [QUERY_SELECTION_ALL]
         if (not queries and not iri_list) or (
-            "preset" in selection and selection["preset"] == "subject_relative"
+            selection.get("preset") == "subject_relative"
         ):
             queries += [QUERY_SELECTION_RELATIVE]
 
