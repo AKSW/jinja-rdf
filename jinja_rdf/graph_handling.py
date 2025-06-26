@@ -18,6 +18,16 @@ QUERY_SELECTION_RELATIVE = 'SELECT ?resourceIri { ?resourceIri ?p ?o . FILTER re
 QUERY_SELECTION_ALL = "SELECT ?resourceIri { ?resourceIri ?p ?o }"
 
 
+def split_iris(*args):
+    """Takes an arbitrary number of iri arguments either as str/URIRef or
+    NamedTuple and return all as NamedTuple as returned by urlsplit."""
+    for iri in args:
+        if iri and not isinstance(iri, SplitResult):
+            yield urlsplit(iri)
+        else:
+            yield iri
+
+
 class IRIPath(PurePosixPath):
     """Mainly a wrapper for a PurePosixPath that preserves a trailing slash."""
 
@@ -206,13 +216,3 @@ class GraphToFilesystemHelper:
         return base_iri[0:1] == iri[0:1] and IRIPath(iri.path).is_relative_to(
             base_iri.path
         )
-
-
-def split_iris(*args):
-    """Takes an arbitrary number of iri arguments either as str/URIRef or
-    NamedTuple and return all as NamedTuple as returned by urlsplit."""
-    for iri in args:
-        if iri and not isinstance(iri, SplitResult):
-            yield urlsplit(iri)
-        else:
-            yield iri
