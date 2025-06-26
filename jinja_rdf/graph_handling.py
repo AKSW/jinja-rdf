@@ -3,9 +3,11 @@ generation and templating."""
 
 from urllib.parse import urlsplit, urlunsplit, SplitResult
 from rdflib import Graph, URIRef, BNode, IdentifiedNode
+from rdflib.resource import Resource
 from pathlib import Path, PurePosixPath
 from hashlib import md5
 from loguru import logger
+from rdflib.namespace import RDF
 
 from typing import TypeAlias
 
@@ -216,3 +218,37 @@ class GraphToFilesystemHelper:
         return base_iri[0:1] == iri[0:1] and IRIPath(iri.path).is_relative_to(
             base_iri.path
         )
+
+
+class TemplateSelectionHelper:
+    def __init__(
+        self,
+        graph: Graph,
+        class_template_map: dict = {},
+        instance_template_map: dict = {},
+    ):
+        self.graph = graph
+        self.instance_template_map = {
+            URIRef(iri): template for iri, template in instance_template_map.items()
+        }
+        self.class_template_map = {
+            URIRef(iri): template for iri, template in class_template_map.items()
+        }
+
+    def get_template_for_resource(self, resource: URIRef | Resource):
+        resource_iri = resource.identifier
+        if self.instance_template_map.get(resource_iri):
+            return self.instance_template_map.get(resource_iri)
+
+        template_candidates = set()
+        for rdf_type in resource[RDF.type]:
+            logger.debug(rdf_type)
+            template = self.class_template_map.get(rdf_type.identifier)
+            if template:
+                template_candidates.add(template)
+
+        if len(template_candidates) > 1:
+            logger.warning("More then one template candidates")
+
+        if len(template_candidates) > 0:
+            return template_candidates.pop()
