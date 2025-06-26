@@ -39,7 +39,7 @@ class GraphToFilesystemHelper:
 
     def __init__(
         self,
-        base_iri: IRIRef_or_Parts,
+        base_iri: str | IRIRef_or_Parts,
         base_path: None | Path = None,
         collect_blank: None | Path = None,
         collect_outside: None | Path = None,
