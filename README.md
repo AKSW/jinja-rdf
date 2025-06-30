@@ -1,4 +1,4 @@
-# JinjaRDF
+# Jinja RDF
 
 This project aims at providing the necessary means to render contents of and RDF Graph with [RDFLib](https://rdflib.readthedocs.io/) in a [Jinja](https://jinja.palletsprojects.com/en/3.0.x/) (jinja2) template.
 
