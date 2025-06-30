@@ -1,39 +1,49 @@
-# RDFLib Jinja
+# JinjaRDF
 
 This project aims at providing the necessary means to render contents of and RDF Graph with [RDFLib](https://rdflib.readthedocs.io/) in a [Jinja](https://jinja.palletsprojects.com/en/3.0.x/) (jinja2) template.
 
 ## Data Model
+
 Provide wrappers around the RDFLib classes to efficiently use the objects in a template.
 
+- `RDFResource`
+- `get_context()`
+  - `resource`
+  - `graph`
+  - `namespace_manager`
+  - `n`
+  - `namespaces`
+
 ## Filters
-Maybe it is required to also provide specific filters?
 
-## Similar Systems
-This library is inspired by [JekyllRDF](https://github.com/AKSW/jekyll-rdf)
+`register_filters()`
 
-### Migrate from JekyllRDF
+- `property`
+- `property_inv`
+- `properties`
+- `properties_inv`
+- `query`
 
-The scope of JekyllRDF is wider, it covers the representation of an entire graph with multiple templates for classes.
-This library just covers individual templates in various contexts.
+## Related Projects
 
-The Resource class in JekyllRDF has the following attributes:
+This project just provides the methods and classes to use RDF graphs to build pages with jinja.
+To use these methods there are two implementations with different use cases:
 
-- `Resource.statements_as_subject`
-- `Resource.statements_as_predicate`
-- `Resource.statements_as_object`
-- `Resource.inspect`
+### Kisumu
 
-The following attributes are only relevant in the wider JekyllRDF context:
-- `Resource.page_url`
-- `Resource.render_path`
-- `Resource.covered`
-- `Resource.rendered`
+[kisumu](https://github.com/AKSW/kisumu)
 
-Those are the filters provided by JekyllRDF.
+A simple command line tool and library to render a template + an RDF graph -> a static document.
 
-- `rdf_get`
-- `rdf_property`  -> `rdf_property`, `Resource[]`
-- `rdf_inverse_property` -> `rdf_inverse_property`
-- `sparql_query`  -> `sparql_query` (TODO)
-- `rdf_container`
-- `rdf_collection`
+### MkRdf
+
+[MkRdf](https://github.com/AKSW/mkrdf)
+
+A MkDocs plugin to render static sites or individual pages in a site with data from an RDF graph.
+
+### Jekyll RDF
+
+[Jekyll RDF](https://github.com/AKSW/jekyll-rdf)
+
+The implementation of jinja-rdf, kisumu, and mkrdf is a result of the lessons learned from JekyllRDF.
+Currently the three tools don't cover all features, that were implemented in JekyllRDF, if you miss a feature that you need, please provide a pull request to one of the projects.
