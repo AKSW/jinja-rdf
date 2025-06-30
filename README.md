@@ -1,5 +1,9 @@
 # Jinja RDF
 
+> [!WARNING]
+>
+> This project is still under development, the interface are unstable and might break in future versions.
+
 This project aims at providing the necessary means to render contents of and RDF Graph with [RDFLib](https://rdflib.readthedocs.io/) in a [Jinja](https://jinja.palletsprojects.com/en/3.0.x/) (jinja2) template.
 
 ## Data Model
