@@ -49,5 +49,4 @@ A MkDocs plugin to render static sites or individual pages in a site with data f
 
 [Jekyll RDF](https://github.com/AKSW/jekyll-rdf)
 
-The implementation of jinja-rdf, kisumu, and mkrdf is a result of the lessons learned from JekyllRDF.
-Currently the three tools don't cover all features, that were implemented in JekyllRDF, if you miss a feature that you need, please provide a pull request to one of the projects.
+[Read about the relation](https://github.com/AKSW/mkrdf/blob/main/README.md#jekyll-rdf) and [how to migrate](https://github.com/AKSW/mkrdf/blob/main/README.md#migrate-from-jekyll-rdf).
