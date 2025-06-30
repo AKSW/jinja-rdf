@@ -248,7 +248,7 @@ class TemplateSelectionHelper:
                 template_candidates.add(template)
 
         if len(template_candidates) > 1:
-            logger.warning("More then one template candidates")
+            logger.warning("More then one template candidate")
 
         if len(template_candidates) > 0:
             return template_candidates.pop()
