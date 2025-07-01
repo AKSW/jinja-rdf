@@ -1,11 +1,13 @@
 from rdflib.resource import Resource as RDFLibResource
 from rdflib.util import from_n3
-from rdflib import BNode, URIRef
+from rdflib import Node, BNode, URIRef
 
 
 class RDFResource(RDFLibResource):
     def __init__(self, graph, subject, namespace_manager=None):
         self.namespace_manager = namespace_manager
+        if not isinstance(subject, Node):
+            subject = URIRef(subject)
         super().__init__(graph, subject)
 
     def __getitem__(self, item):

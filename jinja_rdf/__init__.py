@@ -1,4 +1,4 @@
-from rdflib import Graph, URIRef
+from rdflib import Graph, URIRef, Node
 from rdflib.namespace import Namespace
 from .rdf_property import (
     rdf_properties,
@@ -26,9 +26,13 @@ def get_context(graph: Graph, resource: RDFResource | URIRef | str):
         for prefix, namespace in graph.namespace_manager.namespaces()
     }
     namespaces = {prefix.upper(): namespace for prefix, namespace in n.items()}
+    if not isinstance(resource, RDFResource):
+        if not isinstance(resource, Node):
+            resource = URIRef(resource)
+        resource = RDFResource(graph, resource, graph.namespace_manager)
     return {
         **namespaces,
-        "resource": RDFResource(graph, resource, graph.namespace_manager),
+        "resource": resource,
         "graph": graph,
         "namespace_manager": graph.namespace_manager,
         "n": n,
