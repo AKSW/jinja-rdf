@@ -19,14 +19,15 @@ def register_filters(environment):
     environment.filters["query"] = sparql_query
 
 
-def get_context(graph: Graph, resource: RDFResource | URIRef | str):
+def get_context(graph: Graph, resource: RDFResource | URIRef | str | None):
     """Get the context to pass to a jinja template render or stream function."""
     n = {
         prefix: Namespace(namespace)
         for prefix, namespace in graph.namespace_manager.namespaces()
     }
     namespaces = {prefix.upper(): namespace for prefix, namespace in n.items()}
-    if not isinstance(resource, RDFResource):
+
+    if resource and not isinstance(resource, RDFResource):
         if not isinstance(resource, Node):
             resource = URIRef(resource)
         resource = RDFResource(graph, resource, graph.namespace_manager)
