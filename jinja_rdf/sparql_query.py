@@ -37,7 +37,7 @@ def sparql_query(
             query,
             initBindings=set_init_bindings(
                 {
-                    **{k: from_n3(v) for k, v in kwargs.items()},
+                    **{k: from_n3(v) for k, v in dict(kwargs).items()},
                     "resourceIri": resourceIri,
                     "resourceUri": resourceIri,
                     "graphIri": graph.identifier,
