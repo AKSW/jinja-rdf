@@ -35,13 +35,15 @@ def sparql_query(
     try:
         return graph.query(
             query,
-            initBindings=set_init_bindings(
-                {
-                    **{k: from_n3(v) for k, v in dict(kwargs).items()},
-                    "resourceIri": resourceIri,
-                    "resourceUri": resourceIri,
-                    "graphIri": graph.identifier,
-                }
+            initBindings=dict(
+                set_init_bindings(
+                    {
+                        **{k: from_n3(v) for k, v in dict(kwargs).items()},
+                        "resourceIri": resourceIri,
+                        "resourceUri": resourceIri,
+                        "graphIri": graph.identifier,
+                    }
+                )
             ),
             initNs=namespaces,
         )
