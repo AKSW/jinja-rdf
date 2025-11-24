@@ -12,7 +12,7 @@ def set_init_bindings(bindings: dict[str, Identifier]) -> dict[str, URIRef]:
     """Set the init bindings, for a graph.query() call and make sure that no
     blank nodes, i.e. only URIRef and Literal are set."""
     for var, val in bindings.items():
-        if isinstance(val, [URIRef, Literal]):
+        if isinstance(val, (URIRef, Literal)):
             yield var, val
 
 
