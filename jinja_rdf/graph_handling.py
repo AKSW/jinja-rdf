@@ -51,7 +51,7 @@ class IRIPath(PurePosixPath):
 
 
 class GraphToFilesystemHelper:
-    """Methods to convert nodes resp. IRIs to paths, based on a given confifuration."""
+    """Methods to convert nodes resp. IRIs to paths, based on a given configuration."""
 
     def __init__(
         self,
