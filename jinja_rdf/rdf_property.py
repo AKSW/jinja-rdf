@@ -34,13 +34,19 @@ def rdf_inverse_properties(
 
 @pass_context
 def rdf_property(
-    context: Context, resource: RDFLibResource | URIRef, property: str | URIRef
+    context: Context,
+    resource: RDFLibResource | URIRef,
+    property: str | URIRef,
+    default=None,
 ):
-    return next(rdf_properties(context, resource, property))
+    return next(rdf_properties(context, resource, property), default)
 
 
 @pass_context
 def rdf_inverse_property(
-    context: Context, resource: RDFLibResource | URIRef, property: str | URIRef
+    context: Context,
+    resource: RDFLibResource | URIRef,
+    property: str | URIRef,
+    default=None,
 ):
-    return next(rdf_inverse_properties(context, resource, property))
+    return next(rdf_inverse_properties(context, resource, property), default)
