@@ -215,7 +215,7 @@ class GraphToFilesystemHelper:
     def iri_is_relative_to(self, iri: IRIRef_or_Parts):
         """Check if an IRI is relative to some base IRI."""
         iri, base_iri = split_iris(iri, self.base_iri)
-        return base_iri[0:1] == iri[0:1] and IRIPath(iri.path).is_relative_to(
+        return base_iri[0:2] == iri[0:2] and IRIPath(iri.path).is_relative_to(
             base_iri.path
         )
 
