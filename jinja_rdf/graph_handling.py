@@ -16,8 +16,8 @@ urllib.parse.urlsplit"""
 IRIRef_or_Parts: TypeAlias = URIRef | SplitResult
 Node_or_Parts: TypeAlias = IdentifiedNode | IRIRef_or_Parts
 
-QUERY_SELECTION_RELATIVE = 'SELECT ?resourceIri { ?resourceIri ?p ?o . FILTER regex(str(?resourceIri), concat("^", str(?base_iri))) }'
-QUERY_SELECTION_ALL = "SELECT ?resourceIri { ?resourceIri ?p ?o }"
+QUERY_SELECTION_RELATIVE = 'SELECT DISTINCT ?resourceIri { ?resourceIri ?p ?o . FILTER regex(str(?resourceIri), concat("^", str(?base_iri))) }'
+QUERY_SELECTION_ALL = "SELECT DISTINCT ?resourceIri { ?resourceIri ?p ?o }"
 
 
 def split_iris(*args):
