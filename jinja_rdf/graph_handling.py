@@ -49,6 +49,16 @@ class IRIPath(PurePosixPath):
             extended_name = self.parts[-1] + name_extension
         return self.with_segments(*parts, extended_name)
 
+    @property
+    def _str_normcase(self):
+        # String with normalized case, for hashing and equality checks
+        # The overwrite is relevant for the execution of is_relative_to()
+        try:
+            return self._str_normcase_cached
+        except AttributeError:
+            self._str_normcase_cached = PurePosixPath(self)._str_normcase
+            return self._str_normcase_cached
+
 
 class GraphToFilesystemHelper:
     """Methods to convert nodes resp. IRIs to paths, based on a given configuration."""
